@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnPausa - Herramienta de Bienestar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 18px 25px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn-laboral {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-laboral:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-ansiedad {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-ansiedad:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-espiritualidad {
+            background: #9C27B0;
+            color: white;
+        }
+
+        .btn-espiritualidad:hover {
+            background: #7b1fa2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.3);
+        }
+
+        .phrase-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phrase-text {
+            font-size: 1.4em;
+            color: #333;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .btn-next:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+            max-width: 300px;
+            z-index: 1000;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .notification p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .settings {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .settings h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .toggle-label {
+            color: #333;
+            font-size: 1em;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4CAF50;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 32px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .logo h1 {
+                font-size: 2em;
+            }
+
+            .phrase-text {
+                font-size: 1.2em;
+            }
+
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🌿 EnPausa</h1>
+            <p>Herramienta para tu bienestar emocional</p>
+        </div>
+
+        <!-- Sección de inicio -->
+        <div id="home" class="section active">
+            <div class="category-buttons">
+                <button class="btn btn-laboral" onclick="showCategory('laboral')">
+                    💼 Estrés Laboral
+                </button>
+                <button class="btn btn-ansiedad" onclick="showCategory('ansiedad')">
+                    🧠 Ansiedad
+                </button>
+                <button class="btn btn-espiritualidad" onclick="showCategory('espiritualidad')">
+                    ✨ Espiritualidad
+                </button>
+            </div>
+
+            <div class="settings">
+                <h3>⚙️ Configuración</h3>
+                <div class="toggle-container">
+                    <span class="toggle-label">Recordatorios cada 4 horas</span>
+                    <div class="toggle-switch active" id="reminderToggle" onclick="toggleReminders()"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de frases -->
+        <div id="phrases" class="section">
+            <div class="phrase-card">
+                <p class="phrase-text" id="currentPhrase"></p>
+            </div>
+            <button class="btn btn-next" onclick="nextPhrase()">
+                🔄 Siguiente frase
+            </button>
+            <button class="btn btn-secondary" onclick="goHome()">
+                ← Volver al inicio
+            </button>
+        </div>
+    </div>
+
+    <!-- Notificación de recordatorio -->
+    <div id="notification" class="notification">
+        <h3>🌿 Es momento de una pausa</h3>
+        <p>Recuerda respirar y cuidar de ti mismo/a</p>
+    </div>
+
+    <script>
+        const phrases = {
+            laboral: [
+                "Respira no todo depende de ti",
+                "Haz una pausa. Estás haciendo lo mejor que puedes.",
+                "No te afanes. Respira, la solución está en tu mente.",
+                "Cierra los ojos y respira.",
+                "Respira. Aún en el cansancio, eres capaz.",
+                "Respira. Puedes avanzar paso a paso.",
+                "Suelta un instante. No tienes que cargar con todo.",
+                "Detente. Tu mente también necesita descanso.",
+                "Haz una pausa. El descanso también es productividad."
+            ],
+            ansiedad: [
+                "Respira no todo depende de ti",
+                "Confía. Este momento no define todo tu camino.",
+                "No te sientas mal por sentirte así.",
+                "Cierra los ojos y respira.",
+                "Haz silencio interior. Lo importante se ordena con calma.",
+                "Respira. Puedes avanzar paso a paso.",
+                "Confía. No estás solo/a en este proceso.",
+                "Respira profundo. Hoy también es suficiente.",
+                "Confía. Incluso aquí, estás aprendiendo."
+            ],
+            espiritualidad: [
+                "Respira. Dios también cuida lo que hoy te preocupa.",
+                "Ten fe. Todo se mejorará pues corregiste tu error.",
+                "Respira. Aún en el cansancio, eres capaz.",
+                "Haz silencio interior. Lo importante se ordena con calma.",
+                "Confía. No estás solo/a en este proceso.",
+                "Respira. Haz tu parte y deja lo demás en manos de Dios.",
+                "Deja todo en manos de Dios."
+            ]
+        };
+
+        let currentCategory = '';
+        let currentPhraseIndex = 0;
+        let remindersEnabled = true;
+        let reminderInterval = null;
+
+        function showCategory(category) {
+            currentCategory = category;
+            currentPhraseIndex = 0;
+            showSection('phrases');
+            displayPhrase();
+        }
+
+        function displayPhrase() {
+            const phraseElement = document.getElementById('currentPhrase');
+            const categoryPhrases = phrases[currentCategory];
+            phraseElement.textContent = categoryPhrases[currentPhraseIndex];
+        }
+
+        function nextPhrase() {
+            const categoryPhrases = phrases[currentCategory];
+            currentPhraseIndex = (currentPhraseIndex + 1) % categoryPhrases.length;
+            displayPhrase();
+        }
+
+        function goHome() {
+            showSection('home');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function toggleReminders() {
+            const toggle = document.getElementById('reminderToggle');
+            remindersEnabled = !remindersEnabled;
+            
+            if (remindersEnabled) {
+                toggle.classList.add('active');
+                startReminders();
+            } else {
+                toggle.classList.remove('active');
+                stopReminders();
+            }
+        }
+
+        function startReminders() {
+            if (reminderInterval) clearInterval(reminderInterval);
+            
+            // Recordatorio cada 4 horas (14400000 ms)
+            reminderInterval = setInterval(() => {
+                showNotification();
+            }, 14400000);
+            
+            // Para demo: también mostrar un recordatorio a los 10 segundos
+            setTimeout(() => {
+                if (remindersEnabled) {
+                    showNotification();
+                }
+            }, 10000);
+        }
+
+        function stopReminders() {
+            if (reminderInterval) {
+                clearInterval(reminderInterval);
+                reminderInterval = null;
+            }
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Iniciar recordatorios al cargar la página
+        startReminders();
+    </script>
+</body>
+</html>
