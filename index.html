@@ -1,434 +1,1549 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EnPausa - Herramienta de Bienestar</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="EnPausa - Herramienta de bienestar emocional. Frases para estrés laboral, ansiedad y espiritualidad con recordatorios y ejercicios de respiración.">
+<meta name="theme-color" content="#2d5a3d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<title>🌿 EnPausa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #2d5a3d;
+  --forest-light: #3a7a52;
+  --sage: #7fa88b;
+  --mint: #b8d4c3;
+  --cream: #f5f0e8;
+  --warm: #e8ddd0;
+  --sand: #d4c5b2;
+  --text: #2a2a28;
+  --text-soft: #5a5a56;
+  --ocean: #3a6b8a;
+  --ocean-light: #5a8dad;
+  --lavender: #7a6b8a;
+  --lavender-light: #9a8baa;
+  --glow: rgba(127, 168, 139, 0.15);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(45, 90, 61, 0.12);
+  --shadow-lg: 0 16px 48px rgba(45, 90, 61, 0.18);
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  position: relative;
+  overflow-x: hidden;
+}
 
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+/* Fondo con textura sutil */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(45,90,61,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(58,107,138,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(122,107,138,0.03) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
 
-        .logo h1 {
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+.container {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 24px;
+  padding: 36px 28px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: 1;
+}
 
-        .logo p {
-            color: #666;
-            font-size: 0.95em;
-        }
+/* LOGO */
+.logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
 
-        .section {
-            display: none;
-        }
+.logo h1 {
+  font-family: 'DM Serif Display', serif;
+  color: var(--forest);
+  font-size: 2.2em;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
 
-        .section.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
+.logo p {
+  color: var(--text-soft);
+  font-size: 0.9em;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* SECCIONES */
+.section { display: none; }
+.section.active {
+  display: block;
+  animation: fadeIn 0.4s ease-out;
+}
 
-        .category-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-        .btn {
-            padding: 18px 25px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            text-align: center;
-        }
+/* BOTONES DE CATEGORÍA */
+.category-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
 
-        .btn-laboral {
-            background: #4CAF50;
-            color: white;
-        }
+.btn {
+  padding: 16px 22px;
+  font-size: 1em;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+  letter-spacing: 0.2px;
+  position: relative;
+  overflow: hidden;
+}
 
-        .btn-laboral:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-        }
+.btn:active { transform: scale(0.97); }
 
-        .btn-ansiedad {
-            background: #2196F3;
-            color: white;
-        }
+.btn-laboral {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
+  color: white;
+}
+.btn-laboral:hover {
+  box-shadow: 0 6px 20px rgba(45,90,61,0.35);
+  transform: translateY(-2px);
+}
 
-        .btn-ansiedad:hover {
-            background: #0b7dda;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
-        }
+.btn-ansiedad {
+  background: linear-gradient(135deg, var(--ocean) 0%, var(--ocean-light) 100%);
+  color: white;
+}
+.btn-ansiedad:hover {
+  box-shadow: 0 6px 20px rgba(58,107,138,0.35);
+  transform: translateY(-2px);
+}
 
-        .btn-espiritualidad {
-            background: #9C27B0;
-            color: white;
-        }
+.btn-espiritualidad {
+  background: linear-gradient(135deg, var(--lavender) 0%, var(--lavender-light) 100%);
+  color: white;
+}
+.btn-espiritualidad:hover {
+  box-shadow: 0 6px 20px rgba(122,107,138,0.35);
+  transform: translateY(-2px);
+}
 
-        .btn-espiritualidad:hover {
-            background: #7b1fa2;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.3);
-        }
+.btn-musica {
+  background: linear-gradient(135deg, #8a6b5a 0%, #aa8b7a 100%);
+  color: white;
+}
+.btn-musica:hover {
+  box-shadow: 0 6px 20px rgba(138,107,90,0.35);
+  transform: translateY(-2px);
+}
 
-        .phrase-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 40px 30px;
-            border-radius: 15px;
-            margin: 20px 0;
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* SECCIÓN MÚSICA */
+.music-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
 
-        .phrase-text {
-            font-size: 1.4em;
-            color: #333;
-            line-height: 1.6;
-            font-weight: 500;
-        }
+.music-card {
+  background: linear-gradient(145deg, var(--cream) 0%, var(--warm) 100%);
+  border: 1px solid rgba(212,197,178,0.4);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            margin-top: 20px;
-        }
+.music-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(45,90,61,0.1);
+}
 
-        .btn-secondary:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
+.music-card.playing {
+  border-color: var(--forest-light);
+  background: linear-gradient(145deg, rgba(127,168,139,0.12) 0%, rgba(184,212,195,0.15) 100%);
+}
 
-        .btn-next {
-            background: #667eea;
-            color: white;
-            margin-top: 15px;
-        }
+.music-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3em;
+  flex-shrink: 0;
+}
 
-        .btn-next:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
+.music-icon.piano { background: linear-gradient(135deg, #d4c5b2, #e8ddd0); }
+.music-icon.guitar { background: linear-gradient(135deg, #c3cfe2, #dce6f0); }
+.music-icon.ambient { background: linear-gradient(135deg, #b8d4c3, #d0e8da); }
+.music-icon.strings { background: linear-gradient(135deg, #d4c1d8, #e8dcea); }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: none;
-            max-width: 300px;
-            z-index: 1000;
-            animation: slideIn 0.5s;
-        }
+.music-info {
+  flex: 1;
+  min-width: 0;
+}
 
-        @keyframes slideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+.music-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95em;
+  margin-bottom: 2px;
+}
 
-        .notification.show {
-            display: block;
-        }
+.music-desc {
+  color: var(--text-soft);
+  font-size: 0.8em;
+}
 
-        .notification h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
+.music-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
 
-        .notification p {
-            color: #666;
-            font-size: 0.95em;
-        }
+.music-play-btn:hover {
+  background: var(--forest-light);
+  transform: scale(1.08);
+}
 
-        .settings {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #f0f0f0;
-        }
+/* Player activo */
+.music-player-bar {
+  background: var(--forest);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-top: 14px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
 
-        .settings h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
+.music-player-bar.active { display: block; }
 
-        .toggle-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0;
-        }
+.player-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
 
-        .toggle-label {
-            color: #333;
-            font-size: 1em;
-        }
+.player-track-name {
+  color: white;
+  font-weight: 600;
+  font-size: 0.9em;
+}
 
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            background: #ccc;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+.player-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
 
-        .toggle-switch.active {
-            background: #4CAF50;
-        }
+.player-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
 
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: left 0.3s;
-        }
+.player-btn:hover { background: rgba(255,255,255,0.25); }
+.player-btn.active-btn { background: rgba(255,255,255,0.3); }
 
-        .toggle-switch.active::after {
-            left: 32px;
-        }
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.2);
+  outline: none;
+}
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 25px;
-            }
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
 
-            .logo h1 {
-                font-size: 2em;
-            }
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+}
 
-            .phrase-text {
-                font-size: 1.2em;
-            }
+/* Separador de sección */
+.music-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 12px;
+  color: var(--text-soft);
+  font-size: 0.85em;
+  font-weight: 600;
+}
 
-            .notification {
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-        }
-    </style>
+.music-divider::before,
+.music-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sand);
+}
+
+/* Links externos */
+.external-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.external-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid var(--sand);
+  background: white;
+}
+
+.external-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.external-link-icon {
+  font-size: 1.5em;
+  flex-shrink: 0;
+}
+
+.external-link-text {
+  flex: 1;
+}
+
+.external-link-title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.external-link-desc {
+  color: var(--text-soft);
+  font-size: 0.78em;
+}
+
+/* TARJETA DE FRASE */
+.phrase-card {
+  background: linear-gradient(145deg, var(--cream) 0%, var(--warm) 100%);
+  padding: 36px 28px;
+  border-radius: 20px;
+  margin: 16px 0;
+  text-align: center;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 197, 178, 0.4);
+  position: relative;
+}
+
+.phrase-card::before {
+  content: '"';
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 3em;
+  color: var(--sage);
+  opacity: 0.3;
+  line-height: 1;
+}
+
+.phrase-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3em;
+  color: var(--text);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+.phrase-counter {
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 0.8em;
+  margin-top: 8px;
+  opacity: 0.6;
+}
+
+.btn-next {
+  background: var(--forest);
+  color: white;
+  margin-top: 12px;
+  width: 100%;
+}
+.btn-next:hover {
+  background: var(--forest-light);
+  box-shadow: 0 6px 20px rgba(45,90,61,0.3);
+  transform: translateY(-2px);
+}
+
+.btn-breathe {
+  background: transparent;
+  color: var(--ocean);
+  border: 2px solid var(--ocean);
+  margin-top: 10px;
+  width: 100%;
+}
+.btn-breathe:hover {
+  background: var(--ocean);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--cream);
+  color: var(--text-soft);
+  margin-top: 10px;
+  width: 100%;
+  border: 1px solid var(--sand);
+}
+.btn-secondary:hover {
+  background: var(--warm);
+  transform: translateY(-1px);
+}
+
+.btn-share {
+  background: transparent;
+  color: var(--sage);
+  font-size: 0.85em;
+  padding: 10px;
+  margin-top: 6px;
+  width: 100%;
+}
+.btn-share:hover { color: var(--forest); }
+
+/* EJERCICIO DE RESPIRACIÓN */
+.breathe-section {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.breathe-circle-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 24px auto;
+}
+
+.breathe-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--mint) 0%, var(--sage) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 4s ease-in-out;
+  box-shadow: 0 0 40px rgba(127,168,139,0.3);
+}
+
+.breathe-circle.inhale {
+  transform: scale(1.3);
+  box-shadow: 0 0 60px rgba(127,168,139,0.5);
+}
+
+.breathe-circle.exhale {
+  transform: scale(0.8);
+  box-shadow: 0 0 20px rgba(127,168,139,0.2);
+}
+
+.breathe-text {
+  font-family: 'DM Serif Display', serif;
+  color: white;
+  font-size: 1.2em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.breathe-instruction {
+  color: var(--text-soft);
+  font-size: 0.95em;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+.breathe-counter {
+  color: var(--sage);
+  font-size: 0.85em;
+  margin-top: 8px;
+}
+
+.btn-stop {
+  background: var(--warm);
+  color: var(--text-soft);
+  margin-top: 20px;
+  width: 100%;
+  border: 1px solid var(--sand);
+}
+.btn-stop:hover {
+  background: var(--sand);
+}
+
+/* CONFIGURACIÓN */
+.settings {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--sand);
+}
+
+.settings h3 {
+  color: var(--forest);
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+  margin-bottom: 16px;
+  font-size: 1.05em;
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0;
+}
+
+.toggle-label {
+  color: var(--text);
+  font-size: 0.92em;
+  font-weight: 500;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: var(--sand);
+  border-radius: 28px;
+  cursor: pointer;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.toggle-switch.active { background: var(--forest-light); }
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: left 0.3s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.toggle-switch.active::after { left: 27px; }
+
+/* NOTIFICACIÓN */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 300px;
+  z-index: 1000;
+  transform: translateX(400px);
+  opacity: 0;
+  transition: all 0.4s ease;
+  border-left: 4px solid var(--forest);
+}
+
+.notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification h3 {
+  font-family: 'DM Serif Display', serif;
+  color: var(--forest);
+  margin-bottom: 6px;
+  font-size: 1.05em;
+  font-weight: 400;
+}
+
+.notification p {
+  color: var(--text-soft);
+  font-size: 0.88em;
+  line-height: 1.4;
+}
+
+.notification-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 1.1em;
+  padding: 4px;
+  opacity: 0.5;
+}
+.notification-close:hover { opacity: 1; }
+
+/* VERSION */
+.version {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--sand);
+  font-size: 0.75em;
+  letter-spacing: 0.5px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .container { padding: 28px 20px; border-radius: 20px; }
+  .logo h1 { font-size: 1.9em; }
+  .phrase-text { font-size: 1.15em; }
+  .notification { right: 12px; left: 12px; max-width: none; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <h1>🌿 EnPausa</h1>
-            <p>Herramienta para tu bienestar emocional</p>
-        </div>
 
-        <!-- Sección de inicio -->
-        <div id="home" class="section active">
-            <div class="category-buttons">
-                <button class="btn btn-laboral" onclick="showCategory('laboral')">
-                    💼 Estrés Laboral
-                </button>
-                <button class="btn btn-ansiedad" onclick="showCategory('ansiedad')">
-                    🧠 Ansiedad
-                </button>
-                <button class="btn btn-espiritualidad" onclick="showCategory('espiritualidad')">
-                    ✨ Espiritualidad
-                </button>
-            </div>
+<div class="container">
+  <div class="logo">
+    <h1>🌿 EnPausa</h1>
+    <p>Herramienta para tu bienestar emocional</p>
+  </div>
 
-            <div class="settings">
-                <h3>⚙️ Configuración</h3>
-                <div class="toggle-container">
-                    <span class="toggle-label">Recordatorios cada 4 horas</span>
-                    <div class="toggle-switch active" id="reminderToggle" onclick="toggleReminders()"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sección de frases -->
-        <div id="phrases" class="section">
-            <div class="phrase-card">
-                <p class="phrase-text" id="currentPhrase"></p>
-            </div>
-            <button class="btn btn-next" onclick="nextPhrase()">
-                🔄 Siguiente frase
-            </button>
-            <button class="btn btn-secondary" onclick="goHome()">
-                ← Volver al inicio
-            </button>
-        </div>
+  <!-- INICIO -->
+  <div id="home" class="section active">
+    <div class="category-buttons">
+      <button class="btn btn-laboral" onclick="showCategory('laboral')">
+        💼 Estrés Laboral
+      </button>
+      <button class="btn btn-ansiedad" onclick="showCategory('ansiedad')">
+        🧠 Ansiedad
+      </button>
+      <button class="btn btn-espiritualidad" onclick="showCategory('espiritualidad')">
+        ✨ Espiritualidad
+      </button>
+      <button class="btn btn-musica" onclick="showSection('music')">
+        🎵 Música Relajante
+      </button>
     </div>
 
-    <!-- Notificación de recordatorio -->
-    <div id="notification" class="notification">
-        <h3>🌿 Es momento de una pausa</h3>
-        <p>Recuerda respirar y cuidar de ti mismo/a</p>
+    <div class="settings">
+      <h3>⚙️ Configuración</h3>
+      <div class="toggle-container">
+        <span class="toggle-label">Recordatorios cada 4 horas</span>
+        <div class="toggle-switch" id="reminderToggle" role="switch" aria-label="Activar recordatorios" onclick="toggleReminders()"></div>
+      </div>
     </div>
 
-    <script>
-        const phrases = {
-            laboral: [
-                "Respira no todo depende de ti",
-                "Haz una pausa. Estás haciendo lo mejor que puedes.",
-                "No te afanes. Respira, la solución está en tu mente.",
-                "Cierra los ojos y respira.",
-                "Respira. Aún en el cansancio, eres capaz.",
-                "Respira. Puedes avanzar paso a paso.",
-                "Suelta un instante. No tienes que cargar con todo.",
-                "Detente. Tu mente también necesita descanso.",
-                "Haz una pausa. El descanso también es productividad."
-            ],
-            ansiedad: [
-                "Respira no todo depende de ti",
-                "Confía. Este momento no define todo tu camino.",
-                "No te sientas mal por sentirte así.",
-                "Cierra los ojos y respira.",
-                "Haz silencio interior. Lo importante se ordena con calma.",
-                "Respira. Puedes avanzar paso a paso.",
-                "Confía. No estás solo/a en este proceso.",
-                "Respira profundo. Hoy también es suficiente.",
-                "Confía. Incluso aquí, estás aprendiendo."
-            ],
-            espiritualidad: [
-                "Respira. Dios también cuida lo que hoy te preocupa.",
-                "Ten fe. Todo se mejorará pues corregiste tu error.",
-                "Respira. Aún en el cansancio, eres capaz.",
-                "Haz silencio interior. Lo importante se ordena con calma.",
-                "Confía. No estás solo/a en este proceso.",
-                "Respira. Haz tu parte y deja lo demás en manos de Dios.",
-                "Deja todo en manos de Dios."
-            ]
-        };
+    <div class="version">EnPausa v2.1</div>
+  </div>
 
-        let currentCategory = '';
-        let currentPhraseIndex = 0;
-        let remindersEnabled = true;
-        let reminderInterval = null;
+  <!-- FRASES -->
+  <div id="phrases" class="section">
+    <div class="phrase-card">
+      <p class="phrase-text" id="currentPhrase"></p>
+    </div>
+    <p class="phrase-counter" id="phraseCounter"></p>
+    <button class="btn btn-next" onclick="nextPhrase()">🔄 Siguiente frase</button>
+    <button class="btn btn-breathe" onclick="startBreathing()">🫁 Ejercicio de respiración</button>
+    <button class="btn btn-share" onclick="sharePhrase()">📤 Compartir frase</button>
+    <button class="btn btn-secondary" onclick="goHome()">← Volver al inicio</button>
+  </div>
 
-        function showCategory(category) {
-            currentCategory = category;
-            currentPhraseIndex = 0;
-            showSection('phrases');
-            displayPhrase();
+  <!-- RESPIRACIÓN -->
+  <div id="breathing" class="section">
+    <div class="breathe-section">
+      <h3 style="font-family:'DM Serif Display',serif; color:var(--forest); font-weight:400; font-size:1.2em; margin-bottom:4px;">Ejercicio de respiración</h3>
+      <p style="color:var(--text-soft); font-size:0.85em;">Sigue el ritmo del círculo</p>
+
+      <div class="breathe-circle-container">
+        <div class="breathe-circle" id="breatheCircle">
+          <span class="breathe-text" id="breatheText">Preparado</span>
+        </div>
+      </div>
+
+      <p class="breathe-instruction" id="breatheInstruction">Presiona iniciar cuando estés listo/a</p>
+      <p class="breathe-counter" id="breatheCounter"></p>
+
+      <button class="btn btn-next" id="breatheStartBtn" onclick="toggleBreathing()">▶️ Iniciar</button>
+      <button class="btn btn-secondary" onclick="stopBreathingAndGoBack()">← Volver a las frases</button>
+    </div>
+  </div>
+
+  <!-- MÚSICA -->
+  <div id="music" class="section">
+    <h3 style="font-family:'DM Serif Display',serif; color:var(--forest); font-weight:400; font-size:1.2em; text-align:center; margin-bottom:4px;">🎵 Música Relajante</h3>
+    <p style="color:var(--text-soft); font-size:0.85em; text-align:center; margin-bottom:8px;">Escucha y relájate</p>
+
+    <div class="music-grid">
+      <div class="music-card" id="track-piano" onclick="playTrack('piano')">
+        <div class="music-icon piano">🎹</div>
+        <div class="music-info">
+          <div class="music-title">Piano Dinámico</div>
+          <div class="music-desc">Melodías alegres y fluidas</div>
+        </div>
+        <button class="music-play-btn" id="playBtn-piano">▶</button>
+      </div>
+
+      <div class="music-card" id="track-guitar" onclick="playTrack('guitar')">
+        <div class="music-icon guitar">🎸</div>
+        <div class="music-info">
+          <div class="music-title">Guitarra Acústica</div>
+          <div class="music-desc">Acordes cálidos y tranquilos</div>
+        </div>
+        <button class="music-play-btn" id="playBtn-guitar">▶</button>
+      </div>
+
+      <div class="music-card" id="track-ambient" onclick="playTrack('ambient')">
+        <div class="music-icon ambient">🌊</div>
+        <div class="music-info">
+          <div class="music-title">Ambiente Calma</div>
+          <div class="music-desc">Texturas sonoras envolventes</div>
+        </div>
+        <button class="music-play-btn" id="playBtn-ambient">▶</button>
+      </div>
+
+      <div class="music-card" id="track-strings" onclick="playTrack('strings')">
+        <div class="music-icon strings">🎻</div>
+        <div class="music-info">
+          <div class="music-title">Cuerdas Suaves</div>
+          <div class="music-desc">Violín y chelo relajantes</div>
+        </div>
+        <button class="music-play-btn" id="playBtn-strings">▶</button>
+      </div>
+    </div>
+
+    <!-- Player -->
+    <div class="music-player-bar" id="musicPlayer">
+      <div class="player-info">
+        <span class="player-track-name" id="playerTrackName">—</span>
+        <div class="player-controls">
+          <button class="player-btn" onclick="toggleMute()" id="muteBtn">🔊</button>
+          <button class="player-btn active-btn" onclick="stopAllMusic()">⏹</button>
+        </div>
+      </div>
+      <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="60" oninput="setVolume(this.value)">
+    </div>
+
+    <!-- Links externos -->
+    <div class="music-divider">Playlists en Spotify</div>
+    <div class="external-links">
+      <a class="external-link" href="https://open.spotify.com/playlist/2ODMZHnO9zcajVJ54Rlhz7" target="_blank" rel="noopener">
+        <span class="external-link-icon">🟢</span>
+        <div class="external-link-text">
+          <div class="external-link-title">Relaxing Piano 🦢</div>
+          <div class="external-link-desc">Piano suave y calmante · 598K seguidores</div>
+        </div>
+      </a>
+      <a class="external-link" href="https://open.spotify.com/playlist/37i9dQZF1DWSADWNdZfn11" target="_blank" rel="noopener">
+        <span class="external-link-icon">🟢</span>
+        <div class="external-link-text">
+          <div class="external-link-title">Relaxing Piano Covers</div>
+          <div class="external-link-desc">Covers instrumentales populares · 224K seguidores</div>
+        </div>
+      </a>
+      <a class="external-link" href="https://open.spotify.com/playlist/0YMAHSt06t6feGXAuLiLqI" target="_blank" rel="noopener">
+        <span class="external-link-icon">🟢</span>
+        <div class="external-link-text">
+          <div class="external-link-title">Instrumental Classics 2025</div>
+          <div class="external-link-desc">Clásicos instrumentales relajantes · 175K seguidores</div>
+        </div>
+      </a>
+      <a class="external-link" href="https://www.youtube.com/results?search_query=piano+instrumental+relajante+para+trabajar" target="_blank" rel="noopener">
+        <span class="external-link-icon">🔴</span>
+        <div class="external-link-text">
+          <div class="external-link-title">YouTube</div>
+          <div class="external-link-desc">Videos de piano instrumental relajante</div>
+        </div>
+      </a>
+    </div>
+
+    <button class="btn btn-secondary" onclick="stopAllMusic(); goHome();" style="margin-top:16px;">← Volver al inicio</button>
+  </div>
+</div>
+
+<!-- NOTIFICACIÓN -->
+<div id="notification" class="notification">
+  <button class="notification-close" onclick="hideNotification()">✕</button>
+  <h3>🌿 Es momento de una pausa</h3>
+  <p id="notificationText">Recuerda respirar y cuidar de ti mismo/a.</p>
+</div>
+
+<script>
+// ========== FRASES (corregidas, ampliadas, sin duplicados) ==========
+const phrases = {
+  laboral: [
+    "Respira, no todo depende de ti.",
+    "Haz una pausa. Estás haciendo lo mejor que puedes.",
+    "No te afanes. Respira, la solución está en tu mente.",
+    "Cierra los ojos por un momento y respira profundo.",
+    "Respira. Aún en el cansancio, eres capaz.",
+    "Respira. Puedes avanzar paso a paso.",
+    "Suelta un instante. No tienes que cargar con todo.",
+    "Detente. Tu mente también necesita descanso.",
+    "Haz una pausa. El descanso también es productividad.",
+    "Tu valor no se mide por tu productividad de hoy.",
+    "Antes de resolver, respira. La claridad llega con calma.",
+    "No necesitas tener todo resuelto ahora mismo.",
+    "Permítete hacer una cosa a la vez.",
+    "Tu bienestar es más importante que cualquier plazo."
+  ],
+  ansiedad: [
+    "Confía. Este momento no define todo tu camino.",
+    "No te sientas mal por sentirte así. Es válido.",
+    "Cierra los ojos, respira y deja pasar este instante.",
+    "Haz silencio interior. Lo importante se ordena con calma.",
+    "Respira. Puedes avanzar paso a paso, sin prisa.",
+    "Confía. No estás solo/a en este proceso.",
+    "Respira profundo. Hoy también es suficiente.",
+    "Confía. Incluso aquí, estás aprendiendo.",
+    "Este momento pasará. Los difíciles siempre pasan.",
+    "No tienes que controlar todo. Solo respira.",
+    "Tu mente necesita gentileza, no exigencia.",
+    "Estás aquí. Estás presente. Eso ya es mucho.",
+    "Permítete sentir sin juzgarte.",
+    "La ansiedad miente. Tú eres más fuerte de lo que crees."
+  ],
+  espiritualidad: [
+    "Respira. Dios también cuida lo que hoy te preocupa.",
+    "Ten fe. Todo mejorará, pues corregiste tu camino.",
+    "Respira. Aún en el cansancio, Dios te sostiene.",
+    "Haz silencio interior. Dios habla en la calma.",
+    "Confía. No estás solo/a. Dios camina contigo.",
+    "Respira. Haz tu parte y deja lo demás en manos de Dios.",
+    "Deja todo en manos de Dios. Él tiene el control.",
+    "La paz de Dios sobrepasa todo entendimiento.",
+    "Él conoce tu corazón. Descansa en su amor.",
+    "No temas. Dios ya preparó tu camino.",
+    "Confía en sus tiempos. Son perfectos.",
+    "En la quietud encontrarás su voz."
+  ]
+};
+
+// ========== FRASES DE NOTIFICACIÓN ==========
+const notificationPhrases = [
+  "Recuerda respirar y cuidar de ti mismo/a.",
+  "Tu bienestar importa. Tómate un momento.",
+  "Haz una pausa. Tu mente te lo agradecerá.",
+  "Un respiro a tiempo cambia tu día.",
+  "Detente un momento. Mereces esta pausa."
+];
+
+// ========== ESTADO ==========
+let currentCategory = '';
+let currentPhraseIndex = 0;
+let remindersEnabled = false;
+let reminderInterval = null;
+let demoTimeout = null;
+let breathingActive = false;
+let breathingInterval = null;
+let breathCycles = 0;
+
+// ========== CARGAR ESTADO GUARDADO ==========
+function loadState() {
+  try {
+    const saved = localStorage.getItem('enpausa_reminders');
+    if (saved !== null) {
+      remindersEnabled = saved === 'true';
+    } else {
+      remindersEnabled = true; // Por defecto activado la primera vez
+    }
+  } catch(e) {
+    remindersEnabled = true;
+  }
+  
+  const toggle = document.getElementById('reminderToggle');
+  if (remindersEnabled) {
+    toggle.classList.add('active');
+    startReminders();
+  } else {
+    toggle.classList.remove('active');
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('enpausa_reminders', remindersEnabled.toString());
+  } catch(e) {}
+}
+
+// ========== NAVEGACIÓN ==========
+function showSection(sectionId) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(sectionId).classList.add('active');
+}
+
+function showCategory(category) {
+  currentCategory = category;
+  currentPhraseIndex = Math.floor(Math.random() * phrases[category].length);
+  showSection('phrases');
+  displayPhrase();
+}
+
+function goHome() {
+  stopBreathing();
+  showSection('home');
+}
+
+// ========== FRASES ==========
+function displayPhrase() {
+  const el = document.getElementById('currentPhrase');
+  const list = phrases[currentCategory];
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(6px)';
+  
+  setTimeout(() => {
+    el.textContent = list[currentPhraseIndex];
+    document.getElementById('phraseCounter').textContent = 
+      `${currentPhraseIndex + 1} de ${list.length}`;
+    el.style.transition = 'all 0.3s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }, 150);
+}
+
+function nextPhrase() {
+  const list = phrases[currentCategory];
+  currentPhraseIndex = (currentPhraseIndex + 1) % list.length;
+  displayPhrase();
+}
+
+// ========== COMPARTIR ==========
+function sharePhrase() {
+  const phrase = phrases[currentCategory][currentPhraseIndex];
+  const text = `"${phrase}" — EnPausa 🌿`;
+  
+  if (navigator.share) {
+    navigator.share({ text: text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.btn-share');
+      const original = btn.textContent;
+      btn.textContent = '✅ Copiada al portapapeles';
+      setTimeout(() => { btn.textContent = original; }, 2000);
+    }).catch(() => {});
+  }
+}
+
+// ========== RECORDATORIOS (corregidos) ==========
+function toggleReminders() {
+  remindersEnabled = !remindersEnabled;
+  const toggle = document.getElementById('reminderToggle');
+  
+  if (remindersEnabled) {
+    toggle.classList.add('active');
+    startReminders();
+    requestNotificationPermission();
+  } else {
+    toggle.classList.remove('active');
+    stopReminders();
+  }
+  saveState();
+}
+
+function startReminders() {
+  stopReminders();
+  
+  // Recordatorio cada 4 horas
+  reminderInterval = setInterval(() => {
+    if (remindersEnabled) showNotification();
+  }, 14400000);
+  
+  // Demo: mostrar uno a los 15 segundos (cancelable)
+  demoTimeout = setTimeout(() => {
+    if (remindersEnabled) showNotification();
+  }, 15000);
+}
+
+function stopReminders() {
+  if (reminderInterval) {
+    clearInterval(reminderInterval);
+    reminderInterval = null;
+  }
+  if (demoTimeout) {
+    clearTimeout(demoTimeout);
+    demoTimeout = null;
+  }
+}
+
+function showNotification() {
+  // Notificación in-app
+  const randomPhrase = notificationPhrases[Math.floor(Math.random() * notificationPhrases.length)];
+  document.getElementById('notificationText').textContent = randomPhrase;
+  const notification = document.getElementById('notification');
+  notification.classList.add('show');
+  
+  setTimeout(() => { hideNotification(); }, 6000);
+  
+  // Notificación del sistema si está disponible
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification('🌿 EnPausa', {
+        body: randomPhrase,
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌿</text></svg>'
+      });
+    } catch(e) {}
+  }
+}
+
+function hideNotification() {
+  document.getElementById('notification').classList.remove('show');
+}
+
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+// ========== RESPIRACIÓN ==========
+function startBreathing() {
+  showSection('breathing');
+  breathCycles = 0;
+  updateBreathCounter();
+  const circle = document.getElementById('breatheCircle');
+  circle.className = 'breathe-circle';
+  document.getElementById('breatheText').textContent = 'Preparado';
+  document.getElementById('breatheInstruction').textContent = 'Presiona iniciar cuando estés listo/a';
+  document.getElementById('breatheStartBtn').textContent = '▶️ Iniciar';
+  breathingActive = false;
+}
+
+function toggleBreathing() {
+  if (breathingActive) {
+    stopBreathing();
+    document.getElementById('breatheText').textContent = 'Pausado';
+    document.getElementById('breatheInstruction').textContent = 'Presiona iniciar para continuar';
+    document.getElementById('breatheStartBtn').textContent = '▶️ Continuar';
+  } else {
+    breathingActive = true;
+    document.getElementById('breatheStartBtn').textContent = '⏸️ Pausar';
+    runBreathCycle();
+  }
+}
+
+function runBreathCycle() {
+  if (!breathingActive) return;
+  
+  const circle = document.getElementById('breatheCircle');
+  const text = document.getElementById('breatheText');
+  const instruction = document.getElementById('breatheInstruction');
+  
+  // Inhalar (4s)
+  circle.className = 'breathe-circle inhale';
+  text.textContent = 'Inhala';
+  instruction.textContent = 'Respira profundo por la nariz...';
+  
+  setTimeout(() => {
+    if (!breathingActive) return;
+    // Sostener (4s)
+    text.textContent = 'Sostén';
+    instruction.textContent = 'Mantén el aire...';
+    
+    setTimeout(() => {
+      if (!breathingActive) return;
+      // Exhalar (4s)
+      circle.className = 'breathe-circle exhale';
+      text.textContent = 'Exhala';
+      instruction.textContent = 'Suelta el aire lentamente...';
+      
+      setTimeout(() => {
+        if (!breathingActive) return;
+        breathCycles++;
+        updateBreathCounter();
+        runBreathCycle(); // Siguiente ciclo
+      }, 4000);
+    }, 4000);
+  }, 4000);
+}
+
+function stopBreathing() {
+  breathingActive = false;
+  const circle = document.getElementById('breatheCircle');
+  circle.className = 'breathe-circle';
+}
+
+function stopBreathingAndGoBack() {
+  stopBreathing();
+  showSection('phrases');
+}
+
+function updateBreathCounter() {
+  document.getElementById('breatheCounter').textContent = 
+    breathCycles > 0 ? `Ciclos completados: ${breathCycles}` : '';
+}
+
+// ========== INICIALIZAR ==========
+loadState();
+
+// ========== MÚSICA - Web Audio API ==========
+let audioCtx = null;
+let currentTrack = null;
+let musicNodes = {};
+let musicVolume = 0.6;
+let isMuted = false;
+let masterGain = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = musicVolume;
+    masterGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Generadores de música procedural
+const trackGenerators = {
+  piano: function(ctx, master) {
+    // Piano más rápido y dinámico con melodías alegres
+    const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25]; // C4-E5
+    const bassNotes = [130.81, 146.83, 164.81, 174.61, 196.00, 220.00]; // C3-A3
+    const melodies = [
+      [0, 2, 4, 7, 9, 7, 4, 2, 0, 4, 7, 9, 7, 4, 2, 0],
+      [4, 5, 7, 9, 7, 5, 4, 2, 4, 7, 9, 7, 5, 4, 2, 0],
+      [0, 4, 7, 5, 9, 7, 4, 2, 0, 2, 4, 7, 9, 7, 4, 2],
+      [7, 9, 7, 5, 4, 2, 0, 2, 4, 5, 7, 9, 7, 5, 4, 2],
+      [2, 4, 5, 7, 9, 7, 5, 4, 2, 0, 2, 4, 7, 5, 4, 2],
+      [0, 7, 4, 9, 5, 7, 2, 4, 0, 5, 7, 9, 4, 7, 2, 0]
+    ];
+    let playing = true;
+    let timeouts = [];
+
+    function playNote(freq, time, duration, vol) {
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      
+      // Doble oscilador para un piano más rico
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc2.type = 'sine';
+      osc2.frequency.value = freq * 2.01; // Armónico leve
+      
+      filter.type = 'lowpass';
+      filter.frequency.value = 3500;
+      filter.Q.value = 1;
+      
+      const v = vol || 0.1;
+      gain.gain.setValueAtTime(0, ctx.currentTime + time);
+      gain.gain.linearRampToValueAtTime(v, ctx.currentTime + time + 0.02);
+      gain.gain.setValueAtTime(v * 0.7, ctx.currentTime + time + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + duration);
+      
+      osc.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      
+      osc.start(ctx.currentTime + time);
+      osc.stop(ctx.currentTime + time + duration);
+      osc2.start(ctx.currentTime + time);
+      osc2.stop(ctx.currentTime + time + duration);
+    }
+
+    function playMelody() {
+      if (!playing) return;
+      const melody = melodies[Math.floor(Math.random() * melodies.length)];
+      const tempo = 0.28 + Math.random() * 0.07; // Rápido y variado
+      
+      melody.forEach((noteIdx, i) => {
+        const octave = Math.random() > 0.3 ? 1 : 2;
+        const freq = notes[noteIdx] * octave;
+        const vel = 0.06 + Math.random() * 0.06;
+        playNote(freq, i * tempo, 0.8 + Math.random() * 0.5, vel);
+        
+        // Bajo cada 4 notas
+        if (i % 4 === 0) {
+          const bassIdx = Math.floor(Math.random() * bassNotes.length);
+          playNote(bassNotes[bassIdx], i * tempo, 1.5, 0.04);
         }
+      });
+      
+      const t = setTimeout(() => playMelody(), melody.length * tempo * 1000 + 200);
+      timeouts.push(t);
+    }
 
-        function displayPhrase() {
-            const phraseElement = document.getElementById('currentPhrase');
-            const categoryPhrases = phrases[currentCategory];
-            phraseElement.textContent = categoryPhrases[currentPhraseIndex];
-        }
+    playMelody();
+    return { stop: () => { playing = false; timeouts.forEach(clearTimeout); } };
+  },
 
-        function nextPhrase() {
-            const categoryPhrases = phrases[currentCategory];
-            currentPhraseIndex = (currentPhraseIndex + 1) % categoryPhrases.length;
-            displayPhrase();
-        }
+  guitar: function(ctx, master) {
+    const chords = [
+      [196.00, 246.94, 293.66, 392.00],  // G
+      [220.00, 261.63, 329.63, 440.00],  // Am
+      [174.61, 220.00, 261.63, 349.23],  // F
+      [261.63, 329.63, 392.00, 523.25],  // C
+      [164.81, 196.00, 246.94, 329.63],  // Em
+    ];
+    let playing = true;
+    let timeouts = [];
 
-        function goHome() {
-            showSection('home');
-        }
+    function pluck(freq, startTime, dur) {
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      
+      osc.type = 'triangle';
+      osc2.type = 'sine';
+      osc.frequency.value = freq;
+      osc2.frequency.value = freq * 1.002;
+      
+      filter.type = 'lowpass';
+      filter.frequency.value = 2200;
+      filter.Q.value = 0.5;
+      
+      const t = startTime;
+      gain.gain.setValueAtTime(0, ctx.currentTime + t);
+      gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur);
+      
+      osc.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      
+      osc.start(ctx.currentTime + t);
+      osc.stop(ctx.currentTime + t + dur);
+      osc2.start(ctx.currentTime + t);
+      osc2.stop(ctx.currentTime + t + dur);
+    }
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-        }
+    function arpeggio(chord, startTime) {
+      const pattern = Math.random() > 0.5 
+        ? [0, 1, 2, 3, 2, 1, 0, 3] 
+        : [0, 2, 1, 3, 0, 3, 2, 1];
+      const speed = 0.18 + Math.random() * 0.06;
+      pattern.forEach((idx, i) => {
+        pluck(chord[idx], startTime + i * speed, 1.2);
+      });
+    }
 
-        function toggleReminders() {
-            const toggle = document.getElementById('reminderToggle');
-            remindersEnabled = !remindersEnabled;
-            
-            if (remindersEnabled) {
-                toggle.classList.add('active');
-                startReminders();
-            } else {
-                toggle.classList.remove('active');
-                stopReminders();
-            }
-        }
+    function playLoop() {
+      if (!playing) return;
+      const progression = [0, 4, 2, 3, 1];
+      const chordDur = 1.8;
+      progression.forEach((chordIdx, i) => {
+        arpeggio(chords[chordIdx], i * chordDur);
+      });
+      const t = setTimeout(() => playLoop(), progression.length * chordDur * 1000 + 300);
+      timeouts.push(t);
+    }
 
-        function startReminders() {
-            if (reminderInterval) clearInterval(reminderInterval);
-            
-            // Recordatorio cada 4 horas (14400000 ms)
-            reminderInterval = setInterval(() => {
-                showNotification();
-            }, 14400000);
-            
-            // Para demo: también mostrar un recordatorio a los 10 segundos
-            setTimeout(() => {
-                if (remindersEnabled) {
-                    showNotification();
-                }
-            }, 10000);
-        }
+    playLoop();
+    return { stop: () => { playing = false; timeouts.forEach(clearTimeout); } };
+  },
 
-        function stopReminders() {
-            if (reminderInterval) {
-                clearInterval(reminderInterval);
-                reminderInterval = null;
-            }
-        }
+  ambient: function(ctx, master) {
+    let playing = true;
+    const oscs = [];
+    let timeouts = [];
 
-        function showNotification() {
-            const notification = document.getElementById('notification');
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 5000);
-        }
+    function createDrone(freq, detune) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc.detune.value = detune;
+      
+      filter.type = 'lowpass';
+      filter.frequency.value = 800;
+      
+      gain.gain.value = 0.035;
+      
+      // LFO para movimiento
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.value = 0.08 + Math.random() * 0.15;
+      lfoGain.gain.value = 0.018;
+      lfo.connect(lfoGain);
+      lfoGain.connect(gain.gain);
+      lfo.start();
+      
+      // Filtro LFO para más movimiento
+      const filterLfo = ctx.createOscillator();
+      const filterLfoGain = ctx.createGain();
+      filterLfo.frequency.value = 0.03 + Math.random() * 0.08;
+      filterLfoGain.gain.value = 400;
+      filterLfo.connect(filterLfoGain);
+      filterLfoGain.connect(filter.frequency);
+      filterLfo.start();
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      osc.start();
+      
+      oscs.push(osc, lfo, filterLfo);
+    }
 
-        // Iniciar recordatorios al cargar la página
-        startReminders();
-    </script>
+    // Shimmer notes que aparecen y desaparecen
+    function shimmer() {
+      if (!playing) return;
+      const freqs = [523.25, 659.25, 783.99, 880.00, 1046.50];
+      const freq = freqs[Math.floor(Math.random() * freqs.length)];
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      filter.type = 'lowpass';
+      filter.frequency.value = 1200;
+      
+      const dur = 3 + Math.random() * 4;
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + dur * 0.4);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+      
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      osc.start();
+      osc.stop(ctx.currentTime + dur);
+      
+      const t = setTimeout(() => shimmer(), (2 + Math.random() * 3) * 1000);
+      timeouts.push(t);
+    }
+
+    createDrone(130.81, 0);
+    createDrone(196.00, 5);
+    createDrone(261.63, -3);
+    createDrone(329.63, 7);
+    shimmer();
+
+    return { 
+      stop: () => { 
+        playing = false; 
+        timeouts.forEach(clearTimeout);
+        oscs.forEach(o => { try { o.stop(); } catch(e) {} }); 
+      } 
+    };
+  },
+
+  strings: function(ctx, master) {
+    let playing = true;
+    const oscs = [];
+    let timeouts = [];
+    
+    const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
+    const phrases = [
+      [0, 2, 4, 5, 4, 2],
+      [4, 5, 6, 4, 2, 0],
+      [2, 4, 5, 4, 2, 0],
+      [5, 4, 2, 4, 5, 6]
+    ];
+    
+    function playNote(freq, startTime, duration) {
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      
+      osc.type = 'sawtooth';
+      osc2.type = 'sawtooth';
+      osc.frequency.value = freq;
+      osc2.frequency.value = freq * 1.003;
+      
+      filter.type = 'lowpass';
+      filter.frequency.value = 1400;
+      filter.Q.value = 0.8;
+      
+      gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
+      gain.gain.linearRampToValueAtTime(0.035, ctx.currentTime + startTime + 0.8);
+      gain.gain.setValueAtTime(0.03, ctx.currentTime + startTime + duration * 0.6);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + startTime + duration);
+      
+      // Vibrato
+      const vib = ctx.createOscillator();
+      const vibGain = ctx.createGain();
+      vib.frequency.value = 5.5;
+      vibGain.gain.value = 2.5;
+      vib.connect(vibGain);
+      vibGain.connect(osc.frequency);
+      vibGain.connect(osc2.frequency);
+      vib.start(ctx.currentTime + startTime);
+      vib.stop(ctx.currentTime + startTime + duration);
+      
+      osc.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      osc.start(ctx.currentTime + startTime);
+      osc.stop(ctx.currentTime + startTime + duration);
+      osc2.start(ctx.currentTime + startTime);
+      osc2.stop(ctx.currentTime + startTime + duration);
+      
+      oscs.push(osc, osc2);
+    }
+
+    function playPhrase() {
+      if (!playing) return;
+      const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+      const noteDur = 1.8 + Math.random() * 0.5;
+      
+      // Melodía alta
+      phrase.forEach((noteIdx, i) => {
+        playNote(notes[noteIdx], i * noteDur * 0.6, noteDur);
+      });
+      
+      // Bajo sostenido
+      const bassNote = notes[phrase[0]] * 0.5;
+      playNote(bassNote, 0, phrase.length * noteDur * 0.6);
+      
+      const t = setTimeout(() => playPhrase(), phrase.length * noteDur * 600 + 800);
+      timeouts.push(t);
+    }
+
+    playPhrase();
+    return { 
+      stop: () => { 
+        playing = false; 
+        timeouts.forEach(clearTimeout);
+        oscs.forEach(o => { try { o.stop(); } catch(e) {} }); 
+      } 
+    };
+  }
+};
+
+const trackNames = {
+  piano: 'Piano Dinámico',
+  guitar: 'Guitarra Acústica',
+  ambient: 'Ambiente Calma',
+  strings: 'Cuerdas Suaves'
+};
+
+function playTrack(trackId) {
+  const ctx = getAudioContext();
+  
+  // Si es el mismo track, toggle pausa
+  if (currentTrack === trackId) {
+    stopAllMusic();
+    return;
+  }
+  
+  // Parar track anterior
+  if (musicNodes[currentTrack]) {
+    musicNodes[currentTrack].stop();
+    delete musicNodes[currentTrack];
+  }
+  
+  // Quitar clase playing de todos
+  document.querySelectorAll('.music-card').forEach(c => c.classList.remove('playing'));
+  document.querySelectorAll('.music-play-btn').forEach(b => b.textContent = '▶');
+  
+  // Iniciar nuevo track
+  musicNodes[trackId] = trackGenerators[trackId](ctx, masterGain);
+  currentTrack = trackId;
+  
+  // UI
+  document.getElementById('track-' + trackId).classList.add('playing');
+  document.getElementById('playBtn-' + trackId).textContent = '⏸';
+  document.getElementById('playerTrackName').textContent = trackNames[trackId];
+  document.getElementById('musicPlayer').classList.add('active');
+}
+
+function stopAllMusic() {
+  if (currentTrack && musicNodes[currentTrack]) {
+    musicNodes[currentTrack].stop();
+    delete musicNodes[currentTrack];
+  }
+  currentTrack = null;
+  
+  document.querySelectorAll('.music-card').forEach(c => c.classList.remove('playing'));
+  document.querySelectorAll('.music-play-btn').forEach(b => b.textContent = '▶');
+  document.getElementById('musicPlayer').classList.remove('active');
+}
+
+function setVolume(val) {
+  musicVolume = val / 100;
+  if (masterGain) masterGain.gain.value = isMuted ? 0 : musicVolume;
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  if (masterGain) masterGain.gain.value = isMuted ? 0 : musicVolume;
+  document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊';
+}
+</script>
 </body>
 </html>
