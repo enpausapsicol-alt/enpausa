@@ -1554,19 +1554,34 @@ function toggleMute() {
 let externalAudio = null;
 
 function playExternalAudio() {
-  stopAllMusic();
+}// === Audio externo visible ===
+document.addEventListener("DOMContentLoaded", () => {
+  const audioBox = document.createElement("div");
+  audioBox.style.position = "fixed";
+  audioBox.style.bottom = "20px";
+  audioBox.style.left = "50%";
+  audioBox.style.transform = "translateX(-50%)";
+  audioBox.style.zIndex = "999999";
+  audioBox.style.width = "90%";
+  audioBox.style.maxWidth = "420px";
+  audioBox.style.padding = "15px";
+  audioBox.style.background = "#ffffff";
+  audioBox.style.borderRadius = "12px";
+  audioBox.style.boxShadow = "0 2px 8px rgba(0,0,0,0.25)";
+  audioBox.style.textAlign = "center";
 
-  if (!externalAudio) {
-    externalAudio = new Audio("https://raw.githubusercontent.com/enpausapsicol-alt/enpausa/main/pausa-replantear.mp3");
-    externalAudio.volume = 0.6;
-  }
+  audioBox.innerHTML = `
+    <p style="margin-bottom:10px; font-weight:500;">
+      Pausa ligera 🌿
+    </p>
+    <audio controls style="width:100%;">
+      <source src="enpausa-audio-ligero.mp3" type="audio/mpeg">
+      Tu navegador no soporta audio.
+    </audio>
+  `;
 
-  if (externalAudio.paused) {
-    externalAudio.play();
-  } else {
-    externalAudio.pause();
-  }
-}
+  document.body.appendChild(audioBox);
+});
 </script>
 </body>
 </html>
