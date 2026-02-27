@@ -1582,6 +1582,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.body.appendChild(audioBox);
 });
+  // ====== AUDIO EXTERNO ENPAUSA ======
+let externalAudio = null;
+
+function reproducirAudioExterno() {
+  const existing = document.getElementById('external-audio-box');
+  if (existing) { existing.remove(); return; }
+
+  const audioBox = document.createElement("div");
+  audioBox.id = "external-audio-box";
+  audioBox.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999999;width:90%;max-width:420px;padding:15px;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.25);text-align:center;";
+
+  audioBox.innerHTML = `
+    <p style="margin-bottom:10px;font-weight:500;">Guía: Pausa consciente 🌿</p>
+    <audio controls autoplay style="width:100%;">
+      <source src="Pausaconsiente.mp3" type="audio/mpeg">
+    </audio>
+    <button onclick="document.getElementById('external-audio-box').remove()" style="margin-top:10px;border:none;background:none;cursor:pointer;color:#999;">✕ Cerrar</button>
+  `;
+
+  document.body.appendChild(audioBox);
+}
 </script>
 </body>
 </html>
