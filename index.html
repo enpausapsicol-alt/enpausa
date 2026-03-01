@@ -48,7 +48,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Fondo con textura sutil */
 body::before {
   content: '';
   position: fixed;
@@ -75,7 +74,6 @@ body::before {
   z-index: 1;
 }
 
-/* LOGO */
 .logo {
   text-align: center;
   margin-bottom: 28px;
@@ -97,7 +95,6 @@ body::before {
   letter-spacing: 0.3px;
 }
 
-/* SECCIONES */
 .section { display: none; }
 .section.active {
   display: block;
@@ -109,7 +106,6 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* BOTONES DE CATEGORÍA */
 .category-buttons {
   display: flex;
   flex-direction: column;
@@ -170,7 +166,6 @@ body::before {
   transform: translateY(-2px);
 }
 
-/* SECCIÓN MÚSICA */
 .music-grid {
   display: flex;
   flex-direction: column;
@@ -215,6 +210,7 @@ body::before {
 .music-icon.guitar { background: linear-gradient(135deg, #c3cfe2, #dce6f0); }
 .music-icon.ambient { background: linear-gradient(135deg, #b8d4c3, #d0e8da); }
 .music-icon.strings { background: linear-gradient(135deg, #d4c1d8, #e8dcea); }
+.music-icon.guide { background: linear-gradient(135deg, #c5d4b2, #dae8d0); }
 
 .music-info {
   flex: 1;
@@ -254,7 +250,6 @@ body::before {
   transform: scale(1.08);
 }
 
-/* Player activo */
 .music-player-bar {
   background: var(--forest);
   border-radius: var(--radius);
@@ -332,7 +327,6 @@ body::before {
   border: none;
 }
 
-/* Separador de sección */
 .music-divider {
   display: flex;
   align-items: center;
@@ -351,7 +345,6 @@ body::before {
   background: var(--sand);
 }
 
-/* Links externos */
 .external-links {
   display: flex;
   flex-direction: column;
@@ -380,9 +373,7 @@ body::before {
   flex-shrink: 0;
 }
 
-.external-link-text {
-  flex: 1;
-}
+.external-link-text { flex: 1; }
 
 .external-link-title {
   color: var(--text);
@@ -395,7 +386,6 @@ body::before {
   font-size: 0.78em;
 }
 
-/* TARJETA DE FRASE */
 .phrase-card {
   background: linear-gradient(145deg, var(--cream) 0%, var(--warm) 100%);
   padding: 36px 28px;
@@ -485,7 +475,6 @@ body::before {
 }
 .btn-share:hover { color: var(--forest); }
 
-/* EJERCICIO DE RESPIRACIÓN */
 .breathe-section {
   text-align: center;
   padding: 20px 0;
@@ -547,11 +536,8 @@ body::before {
   width: 100%;
   border: 1px solid var(--sand);
 }
-.btn-stop:hover {
-  background: var(--sand);
-}
+.btn-stop:hover { background: var(--sand); }
 
-/* CONFIGURACIÓN */
 .settings {
   margin-top: 24px;
   padding-top: 20px;
@@ -607,7 +593,6 @@ body::before {
 
 .toggle-switch.active::after { left: 27px; }
 
-/* NOTIFICACIÓN */
 .notification {
   position: fixed;
   top: 20px;
@@ -657,7 +642,6 @@ body::before {
 }
 .notification-close:hover { opacity: 1; }
 
-/* VERSION */
 .version {
   text-align: center;
   margin-top: 20px;
@@ -666,7 +650,6 @@ body::before {
   letter-spacing: 0.5px;
 }
 
-/* RESPONSIVE */
 @media (max-width: 480px) {
   .container { padding: 28px 20px; border-radius: 20px; }
   .logo h1 { font-size: 1.9em; }
@@ -784,15 +767,18 @@ body::before {
         </div>
         <button class="music-play-btn" id="playBtn-strings">▶</button>
       </div>
+
+      <!-- AUDIO GUIADO -->
+      <div class="music-card" id="track-guide" onclick="reproducirAudioExterno()">
+        <div class="music-icon guide">🎙️</div>
+        <div class="music-info">
+          <div class="music-title">Guía: Pausa consciente</div>
+          <div class="music-desc">Audio guiado por EnPausa</div>
+        </div>
+        <button class="music-play-btn" id="playBtn-guide">▶</button>
+      </div>
     </div>
-<div class="music-card" onclick="reproducirAudioExterno()">
-  <div class="music-icon ambient">🎙️</div>
-  <div class="music-info">
-    <div class="music-title">Guía: Pausa consciente</div>
-    <div class="music-desc">Audio guiado por EnPausa</div>
-  </div>
-  <button class="music-play-btn">▶</button>
-</div>
+
     <!-- Player -->
     <div class="music-player-bar" id="musicPlayer">
       <div class="player-info">
@@ -850,7 +836,7 @@ body::before {
 </div>
 
 <script>
-// ========== FRASES (corregidas, ampliadas, sin duplicados) ==========
+// ========== FRASES ==========
 const phrases = {
   laboral: [
     "Respira, no todo depende de ti.",
@@ -900,7 +886,6 @@ const phrases = {
   ]
 };
 
-// ========== FRASES DE NOTIFICACIÓN ==========
 const notificationPhrases = [
   "Recuerda respirar y cuidar de ti mismo/a.",
   "Tu bienestar importa. Tómate un momento.",
@@ -916,18 +901,13 @@ let remindersEnabled = false;
 let reminderInterval = null;
 let demoTimeout = null;
 let breathingActive = false;
-let breathingInterval = null;
 let breathCycles = 0;
 
-// ========== CARGAR ESTADO GUARDADO ==========
+// ========== ESTADO GUARDADO ==========
 function loadState() {
   try {
     const saved = localStorage.getItem('enpausa_reminders');
-    if (saved !== null) {
-      remindersEnabled = saved === 'true';
-    } else {
-      remindersEnabled = true; // Por defecto activado la primera vez
-    }
+    remindersEnabled = saved !== null ? saved === 'true' : true;
   } catch(e) {
     remindersEnabled = true;
   }
@@ -988,7 +968,6 @@ function nextPhrase() {
   displayPhrase();
 }
 
-// ========== COMPARTIR ==========
 function sharePhrase() {
   const phrase = phrases[currentCategory][currentPhraseIndex];
   const text = `"${phrase}" — EnPausa 🌿`;
@@ -1005,7 +984,7 @@ function sharePhrase() {
   }
 }
 
-// ========== RECORDATORIOS (corregidos) ==========
+// ========== RECORDATORIOS ==========
 function toggleReminders() {
   remindersEnabled = !remindersEnabled;
   const toggle = document.getElementById('reminderToggle');
@@ -1023,39 +1002,26 @@ function toggleReminders() {
 
 function startReminders() {
   stopReminders();
-  
-  // Recordatorio cada 4 horas
   reminderInterval = setInterval(() => {
     if (remindersEnabled) showNotification();
   }, 14400000);
-  
-  // Demo: mostrar uno a los 15 segundos (cancelable)
   demoTimeout = setTimeout(() => {
     if (remindersEnabled) showNotification();
   }, 15000);
 }
 
 function stopReminders() {
-  if (reminderInterval) {
-    clearInterval(reminderInterval);
-    reminderInterval = null;
-  }
-  if (demoTimeout) {
-    clearTimeout(demoTimeout);
-    demoTimeout = null;
-  }
+  if (reminderInterval) { clearInterval(reminderInterval); reminderInterval = null; }
+  if (demoTimeout) { clearTimeout(demoTimeout); demoTimeout = null; }
 }
 
 function showNotification() {
-  // Notificación in-app
   const randomPhrase = notificationPhrases[Math.floor(Math.random() * notificationPhrases.length)];
   document.getElementById('notificationText').textContent = randomPhrase;
   const notification = document.getElementById('notification');
   notification.classList.add('show');
-  
   setTimeout(() => { hideNotification(); }, 6000);
   
-  // Notificación del sistema si está disponible
   if ('Notification' in window && Notification.permission === 'granted') {
     try {
       new Notification('🌿 EnPausa', {
@@ -1104,25 +1070,21 @@ function toggleBreathing() {
 
 function runBreathCycle() {
   if (!breathingActive) return;
-  
   const circle = document.getElementById('breatheCircle');
   const text = document.getElementById('breatheText');
   const instruction = document.getElementById('breatheInstruction');
   
-  // Inhalar (4s)
   circle.className = 'breathe-circle inhale';
   text.textContent = 'Inhala';
   instruction.textContent = 'Respira profundo por la nariz...';
   
   setTimeout(() => {
     if (!breathingActive) return;
-    // Sostener (4s)
     text.textContent = 'Sostén';
     instruction.textContent = 'Mantén el aire...';
     
     setTimeout(() => {
       if (!breathingActive) return;
-      // Exhalar (4s)
       circle.className = 'breathe-circle exhale';
       text.textContent = 'Exhala';
       instruction.textContent = 'Suelta el aire lentamente...';
@@ -1131,7 +1093,7 @@ function runBreathCycle() {
         if (!breathingActive) return;
         breathCycles++;
         updateBreathCounter();
-        runBreathCycle(); // Siguiente ciclo
+        runBreathCycle();
       }, 4000);
     }, 4000);
   }, 4000);
@@ -1153,7 +1115,7 @@ function updateBreathCounter() {
     breathCycles > 0 ? `Ciclos completados: ${breathCycles}` : '';
 }
 
-// ========== INICIALIZAR ==========
+// ========== INICIAR ==========
 loadState();
 
 // ========== MÚSICA - Web Audio API ==========
@@ -1175,12 +1137,10 @@ function getAudioContext() {
   return audioCtx;
 }
 
-// Generadores de música procedural
 const trackGenerators = {
   piano: function(ctx, master) {
-    // Piano más rápido y dinámico con melodías alegres
-    const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25]; // C4-E5
-    const bassNotes = [130.81, 146.83, 164.81, 174.61, 196.00, 220.00]; // C3-A3
+    const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
+    const bassNotes = [130.81, 146.83, 164.81, 174.61, 196.00, 220.00];
     const melodies = [
       [0, 2, 4, 7, 9, 7, 4, 2, 0, 4, 7, 9, 7, 4, 2, 0],
       [4, 5, 7, 9, 7, 5, 4, 2, 4, 7, 9, 7, 5, 4, 2, 0],
@@ -1197,52 +1157,37 @@ const trackGenerators = {
       const osc2 = ctx.createOscillator();
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
-      
-      // Doble oscilador para un piano más rico
       osc.type = 'sine';
       osc.frequency.value = freq;
       osc2.type = 'sine';
-      osc2.frequency.value = freq * 2.01; // Armónico leve
-      
+      osc2.frequency.value = freq * 2.01;
       filter.type = 'lowpass';
       filter.frequency.value = 3500;
       filter.Q.value = 1;
-      
       const v = vol || 0.1;
       gain.gain.setValueAtTime(0, ctx.currentTime + time);
       gain.gain.linearRampToValueAtTime(v, ctx.currentTime + time + 0.02);
       gain.gain.setValueAtTime(v * 0.7, ctx.currentTime + time + 0.1);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + duration);
-      
-      osc.connect(filter);
-      osc2.connect(filter);
-      filter.connect(gain);
-      gain.connect(master);
-      
-      osc.start(ctx.currentTime + time);
-      osc.stop(ctx.currentTime + time + duration);
-      osc2.start(ctx.currentTime + time);
-      osc2.stop(ctx.currentTime + time + duration);
+      osc.connect(filter); osc2.connect(filter); filter.connect(gain); gain.connect(master);
+      osc.start(ctx.currentTime + time); osc.stop(ctx.currentTime + time + duration);
+      osc2.start(ctx.currentTime + time); osc2.stop(ctx.currentTime + time + duration);
     }
 
     function playMelody() {
       if (!playing) return;
       const melody = melodies[Math.floor(Math.random() * melodies.length)];
-      const tempo = 0.28 + Math.random() * 0.07; // Rápido y variado
-      
+      const tempo = 0.28 + Math.random() * 0.07;
       melody.forEach((noteIdx, i) => {
         const octave = Math.random() > 0.3 ? 1 : 2;
         const freq = notes[noteIdx] * octave;
         const vel = 0.06 + Math.random() * 0.06;
         playNote(freq, i * tempo, 0.8 + Math.random() * 0.5, vel);
-        
-        // Bajo cada 4 notas
         if (i % 4 === 0) {
           const bassIdx = Math.floor(Math.random() * bassNotes.length);
           playNote(bassNotes[bassIdx], i * tempo, 1.5, 0.04);
         }
       });
-      
       const t = setTimeout(() => playMelody(), melody.length * tempo * 1000 + 200);
       timeouts.push(t);
     }
@@ -1253,11 +1198,11 @@ const trackGenerators = {
 
   guitar: function(ctx, master) {
     const chords = [
-      [196.00, 246.94, 293.66, 392.00],  // G
-      [220.00, 261.63, 329.63, 440.00],  // Am
-      [174.61, 220.00, 261.63, 349.23],  // F
-      [261.63, 329.63, 392.00, 523.25],  // C
-      [164.81, 196.00, 246.94, 329.63],  // Em
+      [196.00, 246.94, 293.66, 392.00],
+      [220.00, 261.63, 329.63, 440.00],
+      [174.61, 220.00, 261.63, 349.23],
+      [261.63, 329.63, 392.00, 523.25],
+      [164.81, 196.00, 246.94, 329.63],
     ];
     let playing = true;
     let timeouts = [];
@@ -1267,49 +1212,29 @@ const trackGenerators = {
       const osc2 = ctx.createOscillator();
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
-      
-      osc.type = 'triangle';
-      osc2.type = 'sine';
-      osc.frequency.value = freq;
-      osc2.frequency.value = freq * 1.002;
-      
-      filter.type = 'lowpass';
-      filter.frequency.value = 2200;
-      filter.Q.value = 0.5;
-      
+      osc.type = 'triangle'; osc2.type = 'sine';
+      osc.frequency.value = freq; osc2.frequency.value = freq * 1.002;
+      filter.type = 'lowpass'; filter.frequency.value = 2200; filter.Q.value = 0.5;
       const t = startTime;
       gain.gain.setValueAtTime(0, ctx.currentTime + t);
       gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + t + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur);
-      
-      osc.connect(filter);
-      osc2.connect(filter);
-      filter.connect(gain);
-      gain.connect(master);
-      
-      osc.start(ctx.currentTime + t);
-      osc.stop(ctx.currentTime + t + dur);
-      osc2.start(ctx.currentTime + t);
-      osc2.stop(ctx.currentTime + t + dur);
+      osc.connect(filter); osc2.connect(filter); filter.connect(gain); gain.connect(master);
+      osc.start(ctx.currentTime + t); osc.stop(ctx.currentTime + t + dur);
+      osc2.start(ctx.currentTime + t); osc2.stop(ctx.currentTime + t + dur);
     }
 
     function arpeggio(chord, startTime) {
-      const pattern = Math.random() > 0.5 
-        ? [0, 1, 2, 3, 2, 1, 0, 3] 
-        : [0, 2, 1, 3, 0, 3, 2, 1];
+      const pattern = Math.random() > 0.5 ? [0,1,2,3,2,1,0,3] : [0,2,1,3,0,3,2,1];
       const speed = 0.18 + Math.random() * 0.06;
-      pattern.forEach((idx, i) => {
-        pluck(chord[idx], startTime + i * speed, 1.2);
-      });
+      pattern.forEach((idx, i) => { pluck(chord[idx], startTime + i * speed, 1.2); });
     }
 
     function playLoop() {
       if (!playing) return;
       const progression = [0, 4, 2, 3, 1];
       const chordDur = 1.8;
-      progression.forEach((chordIdx, i) => {
-        arpeggio(chords[chordIdx], i * chordDur);
-      });
+      progression.forEach((chordIdx, i) => { arpeggio(chords[chordIdx], i * chordDur); });
       const t = setTimeout(() => playLoop(), progression.length * chordDur * 1000 + 300);
       timeouts.push(t);
     }
@@ -1327,43 +1252,23 @@ const trackGenerators = {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
-      
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      osc.detune.value = detune;
-      
-      filter.type = 'lowpass';
-      filter.frequency.value = 800;
-      
+      osc.type = 'sine'; osc.frequency.value = freq; osc.detune.value = detune;
+      filter.type = 'lowpass'; filter.frequency.value = 800;
       gain.gain.value = 0.035;
-      
-      // LFO para movimiento
       const lfo = ctx.createOscillator();
       const lfoGain = ctx.createGain();
       lfo.frequency.value = 0.08 + Math.random() * 0.15;
       lfoGain.gain.value = 0.018;
-      lfo.connect(lfoGain);
-      lfoGain.connect(gain.gain);
-      lfo.start();
-      
-      // Filtro LFO para más movimiento
+      lfo.connect(lfoGain); lfoGain.connect(gain.gain); lfo.start();
       const filterLfo = ctx.createOscillator();
       const filterLfoGain = ctx.createGain();
       filterLfo.frequency.value = 0.03 + Math.random() * 0.08;
       filterLfoGain.gain.value = 400;
-      filterLfo.connect(filterLfoGain);
-      filterLfoGain.connect(filter.frequency);
-      filterLfo.start();
-      
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(master);
-      osc.start();
-      
+      filterLfo.connect(filterLfoGain); filterLfoGain.connect(filter.frequency); filterLfo.start();
+      osc.connect(filter); filter.connect(gain); gain.connect(master); osc.start();
       oscs.push(osc, lfo, filterLfo);
     }
 
-    // Shimmer notes que aparecen y desaparecen
     function shimmer() {
       if (!playing) return;
       const freqs = [523.25, 659.25, 783.99, 880.00, 1046.50];
@@ -1371,124 +1276,70 @@ const trackGenerators = {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
-      
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      filter.type = 'lowpass';
-      filter.frequency.value = 1200;
-      
+      osc.type = 'sine'; osc.frequency.value = freq;
+      filter.type = 'lowpass'; filter.frequency.value = 1200;
       const dur = 3 + Math.random() * 4;
       gain.gain.setValueAtTime(0, ctx.currentTime);
       gain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + dur * 0.4);
       gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
-      
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(master);
-      osc.start();
-      osc.stop(ctx.currentTime + dur);
-      
+      osc.connect(filter); filter.connect(gain); gain.connect(master);
+      osc.start(); osc.stop(ctx.currentTime + dur);
       const t = setTimeout(() => shimmer(), (2 + Math.random() * 3) * 1000);
       timeouts.push(t);
     }
 
-    createDrone(130.81, 0);
-    createDrone(196.00, 5);
-    createDrone(261.63, -3);
-    createDrone(329.63, 7);
+    createDrone(130.81, 0); createDrone(196.00, 5); createDrone(261.63, -3); createDrone(329.63, 7);
     shimmer();
-
-    return { 
-      stop: () => { 
-        playing = false; 
-        timeouts.forEach(clearTimeout);
-        oscs.forEach(o => { try { o.stop(); } catch(e) {} }); 
-      } 
-    };
+    return { stop: () => { playing = false; timeouts.forEach(clearTimeout); oscs.forEach(o => { try { o.stop(); } catch(e) {} }); } };
   },
 
   strings: function(ctx, master) {
     let playing = true;
     const oscs = [];
     let timeouts = [];
-    
     const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
-    const phrases = [
+    const allPhrases = [
       [0, 2, 4, 5, 4, 2],
       [4, 5, 6, 4, 2, 0],
       [2, 4, 5, 4, 2, 0],
       [5, 4, 2, 4, 5, 6]
     ];
-    
+
     function playNote(freq, startTime, duration) {
       const osc = ctx.createOscillator();
       const osc2 = ctx.createOscillator();
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
-      
-      osc.type = 'sawtooth';
-      osc2.type = 'sawtooth';
-      osc.frequency.value = freq;
-      osc2.frequency.value = freq * 1.003;
-      
-      filter.type = 'lowpass';
-      filter.frequency.value = 1400;
-      filter.Q.value = 0.8;
-      
+      osc.type = 'sawtooth'; osc2.type = 'sawtooth';
+      osc.frequency.value = freq; osc2.frequency.value = freq * 1.003;
+      filter.type = 'lowpass'; filter.frequency.value = 1400; filter.Q.value = 0.8;
       gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
       gain.gain.linearRampToValueAtTime(0.035, ctx.currentTime + startTime + 0.8);
       gain.gain.setValueAtTime(0.03, ctx.currentTime + startTime + duration * 0.6);
       gain.gain.linearRampToValueAtTime(0, ctx.currentTime + startTime + duration);
-      
-      // Vibrato
       const vib = ctx.createOscillator();
       const vibGain = ctx.createGain();
-      vib.frequency.value = 5.5;
-      vibGain.gain.value = 2.5;
-      vib.connect(vibGain);
-      vibGain.connect(osc.frequency);
-      vibGain.connect(osc2.frequency);
-      vib.start(ctx.currentTime + startTime);
-      vib.stop(ctx.currentTime + startTime + duration);
-      
-      osc.connect(filter);
-      osc2.connect(filter);
-      filter.connect(gain);
-      gain.connect(master);
-      osc.start(ctx.currentTime + startTime);
-      osc.stop(ctx.currentTime + startTime + duration);
-      osc2.start(ctx.currentTime + startTime);
-      osc2.stop(ctx.currentTime + startTime + duration);
-      
+      vib.frequency.value = 5.5; vibGain.gain.value = 2.5;
+      vib.connect(vibGain); vibGain.connect(osc.frequency); vibGain.connect(osc2.frequency);
+      vib.start(ctx.currentTime + startTime); vib.stop(ctx.currentTime + startTime + duration);
+      osc.connect(filter); osc2.connect(filter); filter.connect(gain); gain.connect(master);
+      osc.start(ctx.currentTime + startTime); osc.stop(ctx.currentTime + startTime + duration);
+      osc2.start(ctx.currentTime + startTime); osc2.stop(ctx.currentTime + startTime + duration);
       oscs.push(osc, osc2);
     }
 
     function playPhrase() {
       if (!playing) return;
-      const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+      const phrase = allPhrases[Math.floor(Math.random() * allPhrases.length)];
       const noteDur = 1.8 + Math.random() * 0.5;
-      
-      // Melodía alta
-      phrase.forEach((noteIdx, i) => {
-        playNote(notes[noteIdx], i * noteDur * 0.6, noteDur);
-      });
-      
-      // Bajo sostenido
-      const bassNote = notes[phrase[0]] * 0.5;
-      playNote(bassNote, 0, phrase.length * noteDur * 0.6);
-      
+      phrase.forEach((noteIdx, i) => { playNote(notes[noteIdx], i * noteDur * 0.6, noteDur); });
+      playNote(notes[phrase[0]] * 0.5, 0, phrase.length * noteDur * 0.6);
       const t = setTimeout(() => playPhrase(), phrase.length * noteDur * 600 + 800);
       timeouts.push(t);
     }
 
     playPhrase();
-    return { 
-      stop: () => { 
-        playing = false; 
-        timeouts.forEach(clearTimeout);
-        oscs.forEach(o => { try { o.stop(); } catch(e) {} }); 
-      } 
-    };
+    return { stop: () => { playing = false; timeouts.forEach(clearTimeout); oscs.forEach(o => { try { o.stop(); } catch(e) {} }); } };
   }
 };
 
@@ -1502,27 +1353,22 @@ const trackNames = {
 function playTrack(trackId) {
   const ctx = getAudioContext();
   
-  // Si es el mismo track, toggle pausa
   if (currentTrack === trackId) {
     stopAllMusic();
     return;
   }
   
-  // Parar track anterior
   if (musicNodes[currentTrack]) {
     musicNodes[currentTrack].stop();
     delete musicNodes[currentTrack];
   }
   
-  // Quitar clase playing de todos
   document.querySelectorAll('.music-card').forEach(c => c.classList.remove('playing'));
   document.querySelectorAll('.music-play-btn').forEach(b => b.textContent = '▶');
   
-  // Iniciar nuevo track
   musicNodes[trackId] = trackGenerators[trackId](ctx, masterGain);
   currentTrack = trackId;
   
-  // UI
   document.getElementById('track-' + trackId).classList.add('playing');
   document.getElementById('playBtn-' + trackId).textContent = '⏸';
   document.getElementById('playerTrackName').textContent = trackNames[trackId];
@@ -1535,10 +1381,13 @@ function stopAllMusic() {
     delete musicNodes[currentTrack];
   }
   currentTrack = null;
-  
   document.querySelectorAll('.music-card').forEach(c => c.classList.remove('playing'));
   document.querySelectorAll('.music-play-btn').forEach(b => b.textContent = '▶');
   document.getElementById('musicPlayer').classList.remove('active');
+  
+  // Cerrar audio guiado si está abierto
+  const audioBox = document.getElementById('external-audio-box');
+  if (audioBox) audioBox.remove();
 }
 
 function setVolume(val) {
@@ -1550,44 +1399,17 @@ function toggleMute() {
   isMuted = !isMuted;
   if (masterGain) masterGain.gain.value = isMuted ? 0 : musicVolume;
   document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊';
-}// ====== AUDIO EXTERNO ENPAUSA ======
-let externalAudio = null;
+}
 
-function playExternalAudio() {
-}// === Audio externo visible ===
-document.addEventListener("DOMContentLoaded", () => {
-  const audioBox = document.createElement("div");
-  audioBox.style.position = "fixed";
-  audioBox.style.bottom = "20px";
-  audioBox.style.left = "50%";
-  audioBox.style.transform = "translateX(-50%)";
-  audioBox.style.zIndex = "999999";
-  audioBox.style.width = "90%";
-  audioBox.style.maxWidth = "420px";
-  audioBox.style.padding = "15px";
-  audioBox.style.background = "#ffffff";
-  audioBox.style.borderRadius = "12px";
-  audioBox.style.boxShadow = "0 2px 8px rgba(0,0,0,0.25)";
-  audioBox.style.textAlign = "center";
-
-  audioBox.innerHTML = `
-    <p style="margin-bottom:10px; font-weight:500;">
-      Pausa ligera 🌿
-    </p>
-    <audio controls style="width:100%;">
-      <source src="https://drive.google.com/uc?export=download&id=1WVOzdNHni6zWyRk-mxl33ynVevKP7knI" type="audio/mpeg">
-      Tu navegador no soporta audio.
-    </audio>
-  `;
-
-  document.body.appendChild(audioBox);
-});
-  // ====== AUDIO EXTERNO ENPAUSA ======
-let externalAudio = null;
-
+// ========== AUDIO GUIADO ==========
 function reproducirAudioExterno() {
   const existing = document.getElementById('external-audio-box');
-  if (existing) { existing.remove(); return; }
+  if (existing) {
+    existing.remove();
+    document.getElementById('track-guide').classList.remove('playing');
+    document.getElementById('playBtn-guide').textContent = '▶';
+    return;
+  }
 
   const audioBox = document.createElement("div");
   audioBox.id = "external-audio-box";
@@ -1597,12 +1419,16 @@ function reproducirAudioExterno() {
     <p style="margin-bottom:10px;font-weight:500;">Guía: Pausa consciente 🌿</p>
     <audio controls autoplay style="width:100%;">
       <source src="Pausaconsiente.mp3" type="audio/mpeg">
+      Tu navegador no soporta audio.
     </audio>
-    <button onclick="document.getElementById('external-audio-box').remove()" style="margin-top:10px;border:none;background:none;cursor:pointer;color:#999;">✕ Cerrar</button>
+    <button onclick="document.getElementById('external-audio-box').remove(); document.getElementById('track-guide').classList.remove('playing'); document.getElementById('playBtn-guide').textContent='▶';" style="margin-top:10px;border:none;background:none;cursor:pointer;color:#999;">✕ Cerrar</button>
   `;
 
   document.body.appendChild(audioBox);
+  document.getElementById('track-guide').classList.add('playing');
+  document.getElementById('playBtn-guide').textContent = '⏸';
 }
 </script>
 </body>
 </html>
+
