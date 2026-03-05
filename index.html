@@ -787,17 +787,17 @@ body::before {
       </div>
 
       <!-- AUDIO GUIADO -->
-      <div class="music-card" id="track-guide" onclick="reproducirAudioExterno()">
-        <div class="music-icon guide">🎙️</div>
-        <div class="music-info">
-          <div class="music-title">Guía: Pausa consciente</div>
-          <div class="music-desc">Audio guiado por EnPausa</div>
-        </div>
-       <button class="music-play-btn" id="playBtn-guide">▶</button>
-<audio id="audio-guia">
-    <source src="Pausaconsiente.mp3" type="audio/mpeg">
-</audio>
-    <!-- Player -->
+      <div class="music-card" id="track-guide">
+    <div class="music-icon guide">🧘</div>
+    <div class="music-info">
+        <div class="music-title">Guía: Pausa consciente</div>
+        <div class="music-desc">Audio guiado por EnPausa</div>
+    </div>
+    <button class="music-play-btn" id="playBtn-guide" onclick="reproducirGuia()">▶</button>
+    <audio id="audio-guia">
+        <source src="Pausaconsiente.mp3" type="audio/mpeg">
+    </audio>
+</div>
     <div class="music-player-bar" id="musicPlayer">
       <div class="player-info">
         <span class="player-track-name" id="playerTrackName">—</span>
@@ -1448,17 +1448,16 @@ function reproducirAudioExterno() {
 }
 </script>
   <script>
-function reproducirAudioExterno() {
-    // Buscamos el audio y el botón por sus IDs
+function reproducirGuia() {
     var audio = document.getElementById('audio-guia');
     var boton = document.getElementById('playBtn-guide');
 
     if (audio.paused) {
         audio.play();
-        boton.innerHTML = "⏸"; // Cambia el símbolo a pausa
+        boton.innerHTML = "⏸"; 
     } else {
         audio.pause();
-        boton.innerHTML = "▶"; // Cambia el símbolo a play
+        boton.innerHTML = "▶"; 
     }
 }
 </script>
