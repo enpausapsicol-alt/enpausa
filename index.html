@@ -793,9 +793,10 @@ body::before {
           <div class="music-title">Guía: Pausa consciente</div>
           <div class="music-desc">Audio guiado por EnPausa</div>
         </div>
-        <button class="music-play-btn" id="playBtn-guide">▶</button>
-    <audio id="audio-guia">
-        <source src="Pausaconsiente.mp3" type="audio/mpeg">
+       <button class="music-play-btn" id="playBtn-guide">▶</button>
+<audio id="audio-guia">
+    <source src="Pausaconsiente.mp3" type="audio/mpeg">
+</audio>
     </audio>
       </div>
     </div>
@@ -1448,6 +1449,21 @@ function reproducirAudioExterno() {
   document.body.appendChild(audioBox);
   document.getElementById('track-guide').classList.add('playing');
   document.getElementById('playBtn-guide').textContent = '⏸';
+}
+</script>
+  <script>
+function reproducirAudioExterno() {
+    // Buscamos el audio y el botón por sus IDs
+    var audio = document.getElementById('audio-guia');
+    var boton = document.getElementById('playBtn-guide');
+
+    if (audio.paused) {
+        audio.play();
+        boton.innerHTML = "⏸"; // Cambia el símbolo a pausa
+    } else {
+        audio.pause();
+        boton.innerHTML = "▶"; // Cambia el símbolo a play
+    }
 }
 </script>
 </body>
