@@ -9,6 +9,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
 <title>🌿 EnPausa</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EnPausa">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1247,6 +1252,9 @@ function stopBreathing() {
 function stopBreathingAndGoBack() {
   stopBreathing();
 
+  // Si la pausa emocional se inició desde el inicio, no hay
+  // una categoría de frases seleccionada. Usamos Ansiedad
+  // como categoría de apoyo para evitar una pantalla vacía.
   if (!phrases[currentCategory]) {
     currentCategory = 'ansiedad';
     currentPhraseIndex = Math.floor(Math.random() * phrases[currentCategory].length);
@@ -1587,6 +1595,13 @@ function reproducirGuia() {
         audio.pause();
         boton.innerHTML = "▶"; 
     }
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
 }
 </script>
 </body>
