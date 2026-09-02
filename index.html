@@ -1246,7 +1246,14 @@ function stopBreathing() {
 
 function stopBreathingAndGoBack() {
   stopBreathing();
+
+  if (!phrases[currentCategory]) {
+    currentCategory = 'ansiedad';
+    currentPhraseIndex = Math.floor(Math.random() * phrases[currentCategory].length);
+  }
+
   showSection('phrases');
+  displayPhrase();
 }
 
 function updateBreathCounter() {
